@@ -7,14 +7,20 @@ from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
+import os
+
 class Settings(BaseSettings):
     # Application
     APP_NAME: str = "Finance Dashboard API"
     APP_VERSION: str = "1.0.0"
-    DEBUG: bool = True
+    DEBUG: bool = False
 
-    # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./finance_dashboard.db"
+    # Database — use /tmp on Vercel (read-only filesystem except /tmp)
+    DATABASE_URL: str = (
+        "sqlite+aiosqlite:////tmp/finance_dashboard.db"
+        if os.environ.get("VERCEL")
+        else "sqlite+aiosqlite:///./finance_dashboard.db"
+    )
 
     # JWT
     SECRET_KEY: str = "finance-dashboard-dev-secret-key-2024"
